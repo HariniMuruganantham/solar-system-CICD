@@ -1,0 +1,35 @@
+name: Solar System Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+
+env:
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+  MONGO_CLUSTER: ${{ vars.MONGO_CLUSTER }}
+  MONGO_DB: ${{ vars.MONGO_DB }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+
+  MONGO_URI: mongodb+srv://${{ vars.MONGO_USERNAME }}:${{ secrets.MONGO_PASSWORD }}@${{ vars.MONGO_CLUSTER }}/${{ vars.MONGO_DB }}?retryWrites=true&w=majority&appName=Cluster0
+  
+jobs:
+  unit-testing:
+    name: Unit Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Unit Tests
+        run: npm test
